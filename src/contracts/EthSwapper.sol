@@ -23,7 +23,7 @@ contract EthSwapper {
         // Conversion rate.  
         uint sh0nTokenAmount = msg.value * sh0nTokenToEthRate;
 
-        // Require that EthSwap has enough tokens
+        // Require that EthSwap has enough tokens. TODO: add a test for this statement. 
         require(sh0nTokenContract.balanceOf(address(this)) >= sh0nTokenAmount);
 
         // Transfer funds to sender. 
