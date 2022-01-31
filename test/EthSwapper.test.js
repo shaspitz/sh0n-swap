@@ -48,9 +48,11 @@ contract("EthSwapper", ([deployer, investor]) => {
     })
 
     describe("buyTokens method", async() => {
+        let resultOfBuy;
+
         before(async () => {
             // Investor purchases sh0n tokens with 1 ETH. 
-            await ethSwapper.buySh0nTokens({ from: investor, value: web3.utils.toWei("1", "ether")})
+            resultOfBuy = await ethSwapper.buySh0nTokens({ from: investor, value: web3.utils.toWei("1", "ether")})
         })
         it("Allows user to purchase sh0ntokens from the eth swapper contract for a fixed price.", async() => {
             let investorBalance = await sh0nToken.balanceOf(investor);
@@ -64,6 +66,12 @@ contract("EthSwapper", ([deployer, investor]) => {
             // EthSwapper exchange contract should gain 1 ETH.
             ethSwapperBalance = await web3.eth.getBalance(ethSwapper.address);
             assert.equal(ethSwapperBalance, web3.utils.toWei("1", "ether"))
+
+            const eventLog = resultOfBuy.logs[0].args
+            assert.equal(eventLog.accountAddr, investor)
+            assert.equal(eventLog.tokenAddr, sh0nToken.address)
+            assert.equal(eventLog.amount, tokensToSmallestDecimal("100"))
+            assert.equal(eventLog.rate.toString(), '100')
         })
     })
 })

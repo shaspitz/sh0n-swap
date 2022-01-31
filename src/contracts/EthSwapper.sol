@@ -8,12 +8,28 @@ contract EthSwapper {
     Sh0nToken public sh0nTokenContract;
     uint public sh0nTokenToEthRate = 100;
 
+    event TokenPurchased(
+        address accountAddr,
+        address tokenAddr,
+        uint amount,
+        uint rate
+    );
+
     constructor(Sh0nToken tokenContract) {
         sh0nTokenContract = tokenContract;
     }
 
     function buySh0nTokens() public payable {
-        uint tokenAmount = msg.value * sh0nTokenToEthRate;
-        sh0nTokenContract.transfer(msg.sender, tokenAmount);
+        // Conversion rate.  
+        uint sh0nTokenAmount = msg.value * sh0nTokenToEthRate;
+
+        // Require that EthSwap has enough tokens
+        require(sh0nTokenContract.balanceOf(address(this)) >= sh0nTokenAmount);
+
+        // Transfer funds to sender. 
+        sh0nTokenContract.transfer(msg.sender, sh0nTokenAmount);
+
+        // Invoke event.        
+        emit TokenPurchased(msg.sender, address(sh0nTokenContract), sh0nTokenAmount, sh0nTokenToEthRate);
     }
 }
