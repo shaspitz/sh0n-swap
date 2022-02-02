@@ -13,6 +13,8 @@ function tokensToSmallestDecimal(numTokens) {
 }
 
 // Fetch two accounts explicitly, deployer and investor. 
+// See https://trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript.html
+// for use of contract function. 
 contract("EthSwapper", ([deployer, investor]) => {
     let sh0nToken, ethSwapper
 
