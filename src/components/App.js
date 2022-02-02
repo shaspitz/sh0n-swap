@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from '../logo.png';
+import dino from '../dino.png';
 import './App.css';
 
 class App extends Component {
@@ -24,20 +24,9 @@ class App extends Component {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src={logo} className="App-logo" alt="logo" />
+                  <img src={dino} className="App-logo" alt="logo" /> 
                 </a>
-                <h1>first proj</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="https://github.com/smarshall-spitzbart"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  first proj <u><b></b></u>
-                </a>
+                <h1>Shawns first html stuff</h1>
               </div>
             </main>
           </div>
