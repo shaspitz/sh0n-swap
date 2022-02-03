@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import dino from '../dino.png'
-import './App.css'
+import Navbar from './Navbar'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers"
+import './App.css'
 
 class App extends Component {
 
@@ -25,10 +26,7 @@ class App extends Component {
 
   async loadBlockchainData(provider) {
     // Store current acount, handle account change event. 
-    const accounts = await provider.listAccounts()
-    .catch((err) => {
-      console.error(err);
-    });
+    const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
     this.setState({currentAccount: accounts[0]});
     window.ethereum.on('accountsChanged', this.handleAccountsChanged);
 
@@ -39,7 +37,7 @@ class App extends Component {
 
     // Store current eth balance.
     const ethBalance = await provider.getBalance(this.state.currentAccount);
-    this.setState({ ethBalance });
+    this.setState({ ethBalance }); // Key and variable are same name. 
   }
 
   handleAccountsChanged(accounts) {
@@ -51,18 +49,20 @@ class App extends Component {
       this.setState({currentAccount: accounts[0]});
   }
 
+  constructor(props) {
+    super(props)
+    // Default state.
+    this.state = {
+      currentAccount: '',
+      ethBalance: '0',
+      chainId: '',
+    }
+  }
+
   render() {
     return (
       <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="https://github.com/smarshall-spitzbart"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-          </a>
-        </nav>
+        <Navbar account={this.state.currentAccount}/>
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">

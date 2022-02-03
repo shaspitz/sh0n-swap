@@ -1,6 +1,7 @@
 const { assert } = require("chai");
 const Sh0nToken = artifacts.require("Sh0nToken");
 const EthSwapper = artifacts.require("EthSwapper");
+// TODO: Is it worth using ethers.js here for consistency with front-end? 
 
 require("chai")
     .use(require("chai-as-promised"))
