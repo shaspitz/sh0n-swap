@@ -1,8 +1,28 @@
-import React, { Component } from 'react';
-import dino from '../dino.png';
-import './App.css';
+import React, { Component } from 'react'
+import dino from '../dino.png'
+import './App.css'
+import detectEthereumProvider from '@metamask/detect-provider'
 
 class App extends Component {
+
+  async componentWillMount() {
+    await this.loadWeb3()
+    await this.loadBlockchainData()
+  }
+
+  async loadWeb3() {
+    const provider = await detectEthereumProvider()
+    // Preferred way to detect the Ethereum provider. See https://docs.metamask.io/guide/ethereum-provider.html.
+    if (provider) {
+      console.log("MetaMask Ethereum provider detected.")
+      return;
+    }
+    window.alert("Please install MetaMas!")
+  }
+
+  async loadBlockchainData() {
+  }
+
   render() {
     return (
       <div>
