@@ -2,25 +2,53 @@ import React, { Component } from 'react'
 import dino from '../dino.png'
 import './App.css'
 import detectEthereumProvider from '@metamask/detect-provider'
+import { ethers } from "ethers"
 
 class App extends Component {
 
   async componentWillMount() {
-    await this.loadWeb3()
-    await this.loadBlockchainData()
+    const provider = await this.ConnectToMetaMask();
+    await this.loadBlockchainData(provider);
   }
 
-  async loadWeb3() {
-    const provider = await detectEthereumProvider()
+  async ConnectToMetaMask() {
     // Preferred way to detect the Ethereum provider. See https://docs.metamask.io/guide/ethereum-provider.html.
-    if (provider) {
-      console.log("MetaMask Ethereum provider detected.")
+    const metaMaskprovider = await detectEthereumProvider()
+    if (metaMaskprovider) {
+      console.log("MetaMask Ethereum provider detected.");
+      if (metaMaskprovider !== window.ethereum)
+        console.error('Do you have multiple wallets installed?');
+      return new ethers.providers.Web3Provider(metaMaskprovider);
+    }
+    window.alert("Please install MetaMask!");
+  }
+
+  async loadBlockchainData(provider) {
+    // Store current acount, handle account change event. 
+    const accounts = await provider.listAccounts()
+    .catch((err) => {
+      console.error(err);
+    });
+    this.setState({currentAccount: accounts[0]});
+    window.ethereum.on('accountsChanged', this.handleAccountsChanged);
+
+    // Store chain id, handle chain change event. 
+    const chainId = await provider.getNetwork();
+    this.setState({chainId: chainId});
+    window.ethereum.on('chainChanged', () => { window.location.reload() });
+
+    // Store current eth balance.
+    const ethBalance = await provider.getBalance(this.state.currentAccount);
+    this.setState({ ethBalance });
+  }
+
+  handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+      console.log('Please connect to MetaMask. Metamask is locked or the user has not connected any accounts.');
       return;
     }
-    window.alert("Please install MetaMas!")
-  }
-
-  async loadBlockchainData() {
+    if (accounts[0] !== this.state.currentAccount) 
+      this.setState({currentAccount: accounts[0]});
   }
 
   render() {
