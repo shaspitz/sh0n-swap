@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import dino from '../dino.png'
 import Navbar from './Navbar'
 import Main from './main'
 import detectEthereumProvider from '@metamask/detect-provider'
@@ -13,6 +12,7 @@ class App extends Component {
   async componentWillMount() {
     const provider = await this.ConnectToMetaMask();
     await this.loadBlockchainData(provider);
+    this.setState({ loading: false })
   }
 
   async ConnectToMetaMask() {
@@ -29,21 +29,17 @@ class App extends Component {
 
   async loadBlockchainData(provider) {
     // Store current acount, handle account change event. 
-    this.onAccountsChanged();
     window.ethereum.on('accountsChanged', this.onAccountsChanged);
+    this.onAccountsChanged();
 
     // Store chain id from network query, handle chain change event. 
+    window.ethereum.on('chainChanged', () => { window.location.reload() });
     const { chainId } = await provider.getNetwork();
     if (!chainId) {
       window.alert("No network/chainId found from provider!");
       return;
     }
     this.setState({chainId: chainId});
-    window.ethereum.on('chainChanged', () => { window.location.reload() });
-
-    // Store current eth balance.
-    const ethBalance = await provider.getBalance(this.state.currentAccount);
-    this.setState({ ethBalance }); // Key and variable are same name.
     
     // Check if Sh0nToken contract is deployed to connected network. 
     const sh0nTokenNetworkEntry = Sh0nToken.networks[chainId];
@@ -62,27 +58,41 @@ class App extends Component {
       window.alert("EthSwapper contract is not deployed to detected network!");
       return;
     }
-
     const ethSwapperContract = new ethers.Contract(ethSwapperNetworkEntry.address,
        Sh0nToken.abi, provider);
     this.setState({ ethSwapperContract });
-
-    // Query and store Sh0nToken balance. 
-    const sh0nTokenBalance = await sh0nTokenContract.balanceOf(this.state.currentAccount);
-    this.setState({ sh0nTokenBalance: sh0nTokenBalance.toString() });
-
-    this.setState({ loading: false })
-  }
+    
+    this.updateBalances();
+ }
 
   async onAccountsChanged() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
     let account;
     if (accounts.length === 0) {
-      console.log("No accounts detected. Metamask may be locked.");
+      window.alert("No accounts detected. Metamask may be locked.");
       account = '';
     } else account = accounts[0];
     this.setState({ currentAccount: account });
+    this.updateBalances();
+  }
+
+  // Query and store current ETH and Sh0nToken balances.
+  async updateBalances() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let ethBalance, sh0nTokenBalance;
+
+    if (this.state.currentAccount && this.state.sh0nTokenContract) {
+      ethBalance = await provider.getBalance(this.state.currentAccount);
+      sh0nTokenBalance = await this.state.sh0nTokenContract.balanceOf(this.state.currentAccount);
+    }
+    else {
+      ethBalance = 0;
+      sh0nTokenBalance = 0;
+      console.log("Balances could not be updated.");
+    }
+    this.setState({ ethBalance: ethBalance.toString() }); 
+    this.setState({ sh0nTokenBalance: sh0nTokenBalance.toString() });
   }
 
   constructor(props) {
@@ -106,14 +116,17 @@ class App extends Component {
     if (this.state.loading) {
       content = <p id="loader" className='text-center'>Loading...</p>
     } else {
-      content = <Main/>
+      content = <Main
+      ethBalance={this.state.ethBalance}
+      sh0nTokenBalance={this.state.sh0nTokenBalance}
+      />
     }
     return (
       <div>
         <Navbar account={this.state.currentAccount}/>
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
+            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{maxWidth: '600px'}}>
               <div className="content mr-auto ml-auto">
                 <a
                   href="https://github.com/smarshall-spitzbart"
