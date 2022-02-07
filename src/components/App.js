@@ -44,17 +44,29 @@ class App extends Component {
     const ethBalance = await provider.getBalance(this.state.currentAccount);
     this.setState({ ethBalance }); // Key and variable are same name.
     
-    // Check if Sh0nToken contract is deployed to connected chain. 
-    const sh0nTokenId = Sh0nToken.networks[chainId];
-    if (!sh0nTokenId) {
+    // Check if Sh0nToken contract is deployed to connected network. 
+    const sh0nTokenNetworkEntry = Sh0nToken.networks[chainId];
+    if (!sh0nTokenNetworkEntry) {
       window.alert("Sh0nToken contract is not deployed to detected network!");
       return;
     }
 
     // Sh0n token contract interface, relevant to network of detected provider.
-    const sh0nTokenContract = new ethers.Contract(sh0nTokenId.address, Sh0nToken.abi, provider);
+    const sh0nTokenContract = new ethers.Contract(sh0nTokenNetworkEntry.address, Sh0nToken.abi, provider);
     this.setState({sh0nTokenContract});
 
+    // Same process as above for the EthSwapper contract. 
+    const ethSwapperNetworkEntry = EthSwapper.networks[chainId];
+    if (!ethSwapperNetworkEntry) {
+      window.alert("EthSwapper contract is not deployed to detected network!");
+      return;
+    }
+
+    const ethSwapperContract = new ethers.Contract(ethSwapperNetworkEntry.address,
+       Sh0nToken.abi, provider);
+    this.setState({ethSwapperContract});
+
+    // Query and store Sh0nToken balance. 
     const sh0nTokenBalance = await sh0nTokenContract.balanceOf(this.state.currentAccount);
     this.setState({sh0nTokenBalance: sh0nTokenBalance.toString()});
   }
@@ -77,6 +89,7 @@ class App extends Component {
       currentAccount: '',
       sh0nTokenContract: {},
       sh0nTokenBalance: '0',
+      ethSwapperContract: {},
       ethBalance: '0',
       chainId: '',
     }
