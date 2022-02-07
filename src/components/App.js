@@ -27,8 +27,18 @@ class App extends Component {
   async loadBlockchainData(provider) {
     // Store current acount, handle account change event. 
     const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
-    this.setState({currentAccount: accounts[0]});
-    window.ethereum.on('accountsChanged', this.handleAccountsChanged);
+    if (accounts.length !== 0)
+      this.setState({currentAccount: accounts[0]})
+
+    window.ethereum.on('accountsChanged', async () => {
+      const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
+      let account;
+      if (accounts.length === 0) {
+        console.log("No accounts detected. Metamask may be locked.");
+        account = '';
+      } else account = accounts[0];
+      this.setState({currentAccount: account});
+    });
 
     // Store chain id, handle chain change event. 
     const chainId = await provider.getNetwork();
@@ -38,15 +48,6 @@ class App extends Component {
     // Store current eth balance.
     const ethBalance = await provider.getBalance(this.state.currentAccount);
     this.setState({ ethBalance }); // Key and variable are same name. 
-  }
-
-  handleAccountsChanged(accounts) {
-    if (accounts.length === 0) {
-      console.log('Please connect to MetaMask. Metamask is locked or the user has not connected any accounts.');
-      return;
-    }
-    if (accounts[0] !== this.state.currentAccount) 
-      this.setState({currentAccount: accounts[0]});
   }
 
   constructor(props) {
