@@ -3,6 +3,8 @@ import dino from '../dino.png'
 import Navbar from './Navbar'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers"
+import EthSwapper from '../abis/EthSwapper.json'
+import Sh0nToken from '../abis/Sh0nToken.json'
 import './App.css'
 
 class App extends Component {
@@ -29,14 +31,32 @@ class App extends Component {
     this.onAccountsChanged();
     window.ethereum.on('accountsChanged', this.onAccountsChanged);
 
-    // Store chain id, handle chain change event. 
-    const chainId = await provider.getNetwork();
+    // Store chain id from network query, handle chain change event. 
+    const { chainId } = await provider.getNetwork();
+    if (!chainId) {
+      window.alert("No network/chainId found from provider!");
+      return;
+    }
     this.setState({chainId: chainId});
     window.ethereum.on('chainChanged', () => { window.location.reload() });
 
     // Store current eth balance.
     const ethBalance = await provider.getBalance(this.state.currentAccount);
-    this.setState({ ethBalance }); // Key and variable are same name. 
+    this.setState({ ethBalance }); // Key and variable are same name.
+    
+    // Check if Sh0nToken contract is deployed to connected chain. 
+    const sh0nTokenId = Sh0nToken.networks[chainId];
+    if (!sh0nTokenId) {
+      window.alert("Sh0nToken contract is not deployed to detected network!");
+      return;
+    }
+
+    // Sh0n token contract interface, relevant to network of detected provider.
+    const sh0nTokenContract = new ethers.Contract(sh0nTokenId.address, Sh0nToken.abi, provider);
+    this.setState({sh0nTokenContract});
+
+    const sh0nTokenBalance = await sh0nTokenContract.balanceOf(this.state.currentAccount);
+    this.setState({sh0nTokenBalance: sh0nTokenBalance.toString()});
   }
 
   async onAccountsChanged() {
@@ -55,6 +75,8 @@ class App extends Component {
     // Default state.
     this.state = {
       currentAccount: '',
+      sh0nTokenContract: {},
+      sh0nTokenBalance: '0',
       ethBalance: '0',
       chainId: '',
     }
