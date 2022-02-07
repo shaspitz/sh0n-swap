@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import dino from '../dino.png'
 import Navbar from './Navbar'
+import Main from './main'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers"
 import EthSwapper from '../abis/EthSwapper.json'
@@ -69,6 +70,8 @@ class App extends Component {
     // Query and store Sh0nToken balance. 
     const sh0nTokenBalance = await sh0nTokenContract.balanceOf(this.state.currentAccount);
     this.setState({ sh0nTokenBalance: sh0nTokenBalance.toString() });
+
+    this.setState({ loading: false })
   }
 
   async onAccountsChanged() {
@@ -92,12 +95,19 @@ class App extends Component {
       ethSwapperContract: {},
       ethBalance: '0',
       chainId: '',
+      loading: true,
     }
     // Neccessary to set state in the callback. 
     this.onAccountsChanged = this.onAccountsChanged.bind(this);
   }
 
   render() {
+    let content;
+    if (this.state.loading) {
+      content = <p id="loader" className='text-center'>Loading...</p>
+    } else {
+      content = <Main/>
+    }
     return (
       <div>
         <Navbar account={this.state.currentAccount}/>
@@ -110,9 +120,8 @@ class App extends Component {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src={dino} className="App-logo" alt="logo" /> 
                 </a>
-                <h1>Shawns first html stuff</h1>
+                {content}
               </div>
             </main>
           </div>
