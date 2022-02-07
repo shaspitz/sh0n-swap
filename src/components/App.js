@@ -26,19 +26,8 @@ class App extends Component {
 
   async loadBlockchainData(provider) {
     // Store current acount, handle account change event. 
-    const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
-    if (accounts.length !== 0)
-      this.setState({currentAccount: accounts[0]})
-
-    window.ethereum.on('accountsChanged', async () => {
-      const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
-      let account;
-      if (accounts.length === 0) {
-        console.log("No accounts detected. Metamask may be locked.");
-        account = '';
-      } else account = accounts[0];
-      this.setState({currentAccount: account});
-    });
+    this.onAccountsChanged();
+    window.ethereum.on('accountsChanged', this.onAccountsChanged);
 
     // Store chain id, handle chain change event. 
     const chainId = await provider.getNetwork();
@@ -50,6 +39,17 @@ class App extends Component {
     this.setState({ ethBalance }); // Key and variable are same name. 
   }
 
+  async onAccountsChanged() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.listAccounts().catch((err) => { console.error(err); });
+    let account;
+    if (accounts.length === 0) {
+      console.log("No accounts detected. Metamask may be locked.");
+      account = '';
+    } else account = accounts[0];
+    this.setState({currentAccount: account});
+  }
+
   constructor(props) {
     super(props)
     // Default state.
@@ -58,6 +58,8 @@ class App extends Component {
       ethBalance: '0',
       chainId: '',
     }
+    // Neccessary to set state in the callback. 
+    this.onAccountsChanged = this.onAccountsChanged.bind(this);
   }
 
   render() {
