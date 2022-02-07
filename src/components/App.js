@@ -53,7 +53,7 @@ class App extends Component {
 
     // Sh0n token contract interface, relevant to network of detected provider.
     const sh0nTokenContract = new ethers.Contract(sh0nTokenNetworkEntry.address, Sh0nToken.abi, provider);
-    this.setState({sh0nTokenContract});
+    this.setState({ sh0nTokenContract });
 
     // Same process as above for the EthSwapper contract. 
     const ethSwapperNetworkEntry = EthSwapper.networks[chainId];
@@ -64,11 +64,11 @@ class App extends Component {
 
     const ethSwapperContract = new ethers.Contract(ethSwapperNetworkEntry.address,
        Sh0nToken.abi, provider);
-    this.setState({ethSwapperContract});
+    this.setState({ ethSwapperContract });
 
     // Query and store Sh0nToken balance. 
     const sh0nTokenBalance = await sh0nTokenContract.balanceOf(this.state.currentAccount);
-    this.setState({sh0nTokenBalance: sh0nTokenBalance.toString()});
+    this.setState({ sh0nTokenBalance: sh0nTokenBalance.toString() });
   }
 
   async onAccountsChanged() {
@@ -79,7 +79,7 @@ class App extends Component {
       console.log("No accounts detected. Metamask may be locked.");
       account = '';
     } else account = accounts[0];
-    this.setState({currentAccount: account});
+    this.setState({ currentAccount: account });
   }
 
   constructor(props) {
