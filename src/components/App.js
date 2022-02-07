@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Navbar from './Navbar'
-import Main from './main'
+import Main from './Main'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers"
 import EthSwapper from '../abis/EthSwapper.json'
