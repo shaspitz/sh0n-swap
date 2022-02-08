@@ -1,6 +1,6 @@
 # sh0n-swap
 Sandbox for blockchain learnings, expanding on various online examples.
 
-TODO: expand functionality to buy sh0nToken with other existing tokens, or other chains, sidechains, etc. Get inspiration from exiting defi. Look into using a smart contract based bridge
+TODO: Add other tokens to DEX. Get inspiration from exiting defi.
 
 Maybe implement liquidity providing and rewards? flash loans?
