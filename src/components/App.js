@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Navbar from './Navbar'
-import Main from './Main'
+import PageContent from './PageContent'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers"
 import EthSwapper from '../abis/EthSwapper.json'
@@ -135,7 +135,7 @@ class App extends Component {
     if (this.state.loading) {
       content = <p id="loader" className='text-center'>Loading...</p>
     } else {
-      content = <Main
+      content = <PageContent
       ethBalance={this.state.ethBalance}
       sh0nTokenBalance={this.state.sh0nTokenBalance}
       buySh0nTokens={this.buySh0nTokens}

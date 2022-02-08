@@ -4,7 +4,7 @@ import dino from '../dino.png'
 import ethLogo from '../ethLogo.png'
 
 
-class Main extends Component {
+class PageContent extends Component {
 
   constructor(props) {
     super(props)
@@ -85,4 +85,4 @@ class Main extends Component {
   }
 }
 
-export default Main;
+export default PageContent;
