@@ -40,6 +40,9 @@ class App extends Component {
       return;
     }
     this.setState({chainId: chainId});
+
+    // Pass signer to both contract interfaces.
+    const signer = await provider.getSigner();
     
     // Check if Sh0nToken contract is deployed to connected network. 
     const sh0nTokenNetworkEntry = Sh0nToken.networks[chainId];
@@ -49,7 +52,7 @@ class App extends Component {
     }
 
     // Sh0n token contract interface, relevant to network of detected provider.
-    const sh0nTokenContract = new ethers.Contract(sh0nTokenNetworkEntry.address, Sh0nToken.abi, provider);
+    const sh0nTokenContract = new ethers.Contract(sh0nTokenNetworkEntry.address, Sh0nToken.abi, signer);
     this.setState({ sh0nTokenContract });
 
     // Same process as above for the EthSwapper contract. 
@@ -59,8 +62,6 @@ class App extends Component {
       return;
     }
 
-    // Pass signer to this contract, not provider, since it'll invoke transactions. 
-    const signer = await provider.getSigner();
     const ethSwapperContract = new ethers.Contract(ethSwapperNetworkEntry.address,
        EthSwapper.abi, signer);
     this.setState({ ethSwapperContract });
@@ -106,7 +107,24 @@ class App extends Component {
     ).catch((err) => {
       success = false;
       console.log(err);
-      window.alert("Transaction failed");
+      window.alert("Transaction to buy Sh0nTokens has failed");
+    });
+    if (success)
+     await transaction.wait().then(() => this.updateBalances());
+    this.setState({loading: false});
+  }
+
+  async sellSh0nTokens(sh0nTokenAmountInSmallestDecimal) {
+    let success = true;
+    this.setState({loading: true});
+    // Approve sale first in token contract. Then sell on eth swapper contract. 
+    await this.state.sh0nTokenContract.approve(this.state.ethSwapperContract.address,
+      sh0nTokenAmountInSmallestDecimal);
+    const transaction = await this.state.ethSwapperContract.sellSh0nTokens(
+    sh0nTokenAmountInSmallestDecimal).catch((err) => {
+      success = false;
+      console.log(err);
+      window.alert("Transaction to sell Sh0nTokens has failed");
     });
     if (success)
      await transaction.wait().then(() => this.updateBalances());
@@ -128,6 +146,7 @@ class App extends Component {
     // Neccessary to set state in the callback. 
     this.onAccountsChanged = this.onAccountsChanged.bind(this);
     this.buySh0nTokens = this.buySh0nTokens.bind(this);
+    this.sellSh0nTokens = this.sellSh0nTokens.bind(this);
   }
 
   render() {
@@ -139,6 +158,7 @@ class App extends Component {
       ethBalance={this.state.ethBalance}
       sh0nTokenBalance={this.state.sh0nTokenBalance}
       buySh0nTokens={this.buySh0nTokens}
+      sellSh0nTokens={this.sellSh0nTokens}
       />
     }
     return (

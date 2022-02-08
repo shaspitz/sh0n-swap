@@ -7,7 +7,6 @@ class SellForm extends Component {
 
   constructor(props) {
     super(props)
-    // Default state.
     this.state = {
         output: '0',
     }
@@ -17,23 +16,23 @@ class SellForm extends Component {
     return (
     <form className="mb-3" onSubmit={(event) => {
         event.preventDefault()
-        const etherAmount = this.input.value.toString();
-        const weiAmount = ethers.utils.parseEther(etherAmount);
-        this.props.buySh0nTokens(weiAmount);
+        const sh0nTokenAmount = this.input.value.toString();
+        const smallestDecimalAmount = ethers.utils.parseEther(sh0nTokenAmount);
+        this.props.sellSh0nTokens(smallestDecimalAmount);
     }}>
     <div>
         <label className="float-left"><b>Input</b></label>
         <span className="float-right text-muted">
-        Balance: {ethers.utils.formatEther(this.props.ethBalance)}
+        Balance: {ethers.utils.formatEther(this.props.sh0nTokenBalance)}
         </span>
     </div>
     <div className="input-group mb-4">
         <input
         type="text"
         onChange={(event) => {
-            const etherAmount = this.input.value.toString();
+            const sh0nTokenAmount = this.input.value.toString();
             this.setState({
-            output: etherAmount * 100
+            output: sh0nTokenAmount / 100
             });
         }}
         ref={(input) => { this.input = input }}
@@ -42,15 +41,15 @@ class SellForm extends Component {
         required />
         <div className="input-group-append">
         <div className="input-group-text">
-            <img src={ethLogo} height='32' width='32' alt=""/>
-            ETH
+        <img src={dino} height='32' width='32' alt=""/>
+            Sh0n
         </div>
         </div>
     </div>
     <div>
         <label className="float-left"><b>Output</b></label>
         <span className="float-right text-muted">
-        Balance: {ethers.utils.formatEther(this.props.sh0nTokenBalance)}
+        Balance: {ethers.utils.formatEther(this.props.ethBalance)}
         </span>
     </div>
     <div className="input-group mb-2">
@@ -63,14 +62,14 @@ class SellForm extends Component {
         />
     <div className="input-group-append">
         <div className="input-group-text">
-        <img src={dino} height='32' width='32' alt=""/>
-            Sh0n
+            <img src={ethLogo} height='32' width='32' alt=""/>
+            ETH
         </div>
     </div>
     </div>
         <div className="mb-5">
         <span className="float-left text-muted">Exchange Rate</span>
-        <span className="float-right text-muted">1 ETH = 100 ShonToken</span>
+        <span className="float-right text-muted">100 Sh0n = 1 ETH</span>
         </div>
     <button type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
     </form>

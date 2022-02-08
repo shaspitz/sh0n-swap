@@ -23,7 +23,7 @@ class PageContent extends Component {
       content = <SellForm
           ethBalance={this.props.ethBalance}
           sh0nTokenBalance={this.props.sh0nTokenBalance}
-          buySh0nTokens={this.props.buySh0nTokens}
+          sellSh0nTokens={this.props.sellSh0nTokens}
           />
     }
     return (

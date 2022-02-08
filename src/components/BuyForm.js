@@ -7,7 +7,6 @@ class BuyForm extends Component {
 
   constructor(props) {
     super(props)
-    // Default state.
     this.state = {
         output: '0',
     }
@@ -70,7 +69,7 @@ class BuyForm extends Component {
     </div>
         <div className="mb-5">
         <span className="float-left text-muted">Exchange Rate</span>
-        <span className="float-right text-muted">1 ETH = 100 ShonToken</span>
+        <span className="float-right text-muted">1 ETH = 100 Sh0n</span>
         </div>
     <button type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
     </form>
