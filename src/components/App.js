@@ -99,11 +99,17 @@ class App extends Component {
   }
 
   async buySh0nTokens(ethAmountInWei) {
+    let success = true;
     this.setState({loading: true});
     const transaction = await this.state.ethSwapperContract.buySh0nTokens(
       {value: ethAmountInWei}
-    );
-    await transaction.wait().then(() => this.updateBalances());
+    ).catch((err) => {
+      success = false;
+      console.log(err);
+      window.alert("Transaction failed");
+    });
+    if (success)
+     await transaction.wait().then(() => this.updateBalances());
     this.setState({loading: false});
   }
 
