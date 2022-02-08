@@ -2,8 +2,8 @@ const Sh0nToken = artifacts.require("Sh0nToken");
 const EthSwapper = artifacts.require("EthSwapper");
 
 module.exports = async function(deployer) {
-    // Deploy ERC20 contract for Sh0nToken with init supply of 1000.
-    await deployer.deploy(Sh0nToken, 1000) 
+    // Deploy ERC20 contract for Sh0nToken with init supply of 1000 tokens, ETH util works due to 18 decimals.
+    await deployer.deploy(Sh0nToken, web3.utils.toWei("1000"));
     const token = await Sh0nToken.deployed()
 
     // Deploy ETH swapper contract. 

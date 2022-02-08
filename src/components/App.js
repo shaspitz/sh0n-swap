@@ -65,7 +65,7 @@ class App extends Component {
        EthSwapper.abi, signer);
     this.setState({ ethSwapperContract });
     
-    this.updateBalances();
+    await this.updateBalances();
  }
 
   async onAccountsChanged() {
@@ -77,7 +77,7 @@ class App extends Component {
       account = '';
     } else account = accounts[0];
     this.setState({ currentAccount: account });
-    this.updateBalances();
+    await this.updateBalances();
   }
 
   // Query and store current ETH and Sh0nToken balances.
@@ -100,11 +100,11 @@ class App extends Component {
 
   async buySh0nTokens(ethAmountInWei) {
     this.setState({loading: true});
-    console.log(await this.state.ethSwapperContract.deployed())
     const transaction = await this.state.ethSwapperContract.buySh0nTokens(
-      {value: ethAmountInWei});
-    await transaction.wait();
-    await this.setState({loading: false});
+      {value: ethAmountInWei}
+    );
+    await transaction.wait().then(async() => await this.updateBalances());
+    this.setState({loading: false});
   }
 
   constructor(props) {
@@ -113,9 +113,9 @@ class App extends Component {
     this.state = {
       currentAccount: '',
       sh0nTokenContract: {},
-      sh0nTokenBalance: '-1',
+      sh0nTokenBalance: '0',
       ethSwapperContract: {},
-      ethBalance: '-1',
+      ethBalance: '0',
       chainId: '',
       loading: true,
     }
