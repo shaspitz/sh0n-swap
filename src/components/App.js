@@ -103,7 +103,7 @@ class App extends Component {
     const transaction = await this.state.ethSwapperContract.buySh0nTokens(
       {value: ethAmountInWei}
     );
-    await transaction.wait().then(async() => await this.updateBalances());
+    await transaction.wait().then(() => this.updateBalances());
     this.setState({loading: false});
   }
 
