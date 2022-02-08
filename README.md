@@ -1,4 +1,4 @@
-# sh0n-swap
+# Sh0n Swap
 Sandbox for blockchain learnings, expanding on various online examples.
 
 TODO: Add other tokens to DEX. Get inspiration from exiting defi.
