@@ -58,8 +58,11 @@ class App extends Component {
       window.alert("EthSwapper contract is not deployed to detected network!");
       return;
     }
+
+    // Pass signer to this contract, not provider, since it'll invoke transactions. 
+    const signer = await provider.getSigner();
     const ethSwapperContract = new ethers.Contract(ethSwapperNetworkEntry.address,
-       Sh0nToken.abi, provider);
+       EthSwapper.abi, signer);
     this.setState({ ethSwapperContract });
     
     this.updateBalances();
@@ -95,20 +98,30 @@ class App extends Component {
     this.setState({ sh0nTokenBalance: sh0nTokenBalance.toString() });
   }
 
+  async buySh0nTokens(ethAmountInWei) {
+    this.setState({loading: true});
+    console.log(await this.state.ethSwapperContract.deployed())
+    const transaction = await this.state.ethSwapperContract.buySh0nTokens(
+      {value: ethAmountInWei});
+    await transaction.wait();
+    await this.setState({loading: false});
+  }
+
   constructor(props) {
     super(props)
     // Default state.
     this.state = {
       currentAccount: '',
       sh0nTokenContract: {},
-      sh0nTokenBalance: '0',
+      sh0nTokenBalance: '-1',
       ethSwapperContract: {},
-      ethBalance: '0',
+      ethBalance: '-1',
       chainId: '',
       loading: true,
     }
     // Neccessary to set state in the callback. 
     this.onAccountsChanged = this.onAccountsChanged.bind(this);
+    this.buySh0nTokens = this.buySh0nTokens.bind(this);
   }
 
   render() {
@@ -119,6 +132,7 @@ class App extends Component {
       content = <Main
       ethBalance={this.state.ethBalance}
       sh0nTokenBalance={this.state.sh0nTokenBalance}
+      buySh0nTokens={this.buySh0nTokens}
       />
     }
     return (
