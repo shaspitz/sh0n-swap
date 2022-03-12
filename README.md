@@ -1,5 +1,5 @@
 # Sh0n Swap
-An ERC20 token implementation, simple token exchange contract, and corresponding web UI. Really just a sandbox to experiment Ethereum development. 
+An ERC20 token implementation, simple token exchange contract, and corresponding web UI. Really just a sandbox to experiment with Ethereum development. 
 
 ## Technologies
 Solidity, Javascript, React/CSS/HTML, Web3.js, Ethers.js, Truffle/Ganache, Metamask interaction.  
