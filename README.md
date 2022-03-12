@@ -2,7 +2,7 @@
 An ERC20 token implementation, simple token exchange contract, and corresponding web UI. Really just a sandbox to experiment with Ethereum development. 
 
 ## Technologies
-Solidity, Javascript, React/CSS/HTML, Web3.js, Ethers.js, Truffle/Ganache, Metamask interaction.  
+Solidity, Javascript, React/CSS/HTML, Web3.js, Ethers.js, Truffle/Ganache, Metamask integration.  
 
 Note that automated unit tests use Web3.js for executing contract functions, while front-end uses Ethers.js. During development for this project, I found the latter package to be preferable. Future projects of mine will use Ethers.js with Hardhat for development, testing, and deployment. 
 
